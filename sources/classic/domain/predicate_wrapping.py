@@ -114,7 +114,7 @@ def criteria(
 
     Пример:
     >>> from dataclasses import dataclass
-    ... from classic.domain.core import criteria
+    ... from classic.domain import criteria
     ...
     ... @dataclass
     ... class Book:
@@ -130,7 +130,7 @@ def criteria(
 
     Также можно оборачивать методы в классе:
     >>> from dataclasses import dataclass
-    ... from classic.domain.core import criteria
+    ... from classic.domain import criteria
     ...
     ... @dataclass
     ... class Book:

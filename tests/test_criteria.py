@@ -1,11 +1,10 @@
 import pytest
 
-from classic.domain.core import (
-    Entity, Criteria, criteria, CriteriaNotSatisfied
-)
+from classic.domain import Criteria, criteria, CriteriaNotSatisfied
+from classic.domain.criteria import DomainObject
 
 
-class SomeEntity(Entity):
+class SomeEntity:
 
     def __init__(self, value):
         self.value = value
@@ -19,6 +18,21 @@ class SomeEntity(Entity):
         return self.value is not None
 
     rule = without_param() & with_param(1)
+
+
+class CriteriaWithParam(Criteria[SomeEntity]):
+
+    def __init__(self, value):
+        self.value = value
+
+    def is_satisfied_by(self, candidate: DomainObject) -> bool:
+        return self.value == candidate.value
+
+
+class CriteriaWithoutParam(Criteria[SomeEntity]):
+
+    def is_satisfied_by(self, candidate: DomainObject) -> bool:
+        return candidate.value is not None
 
 
 @criteria
@@ -59,6 +73,9 @@ def test_instance(entity: SomeEntity):
     SomeEntity.with_param(1) & with_param(1),
     SomeEntity.with_param(1) & without_param(),
     SomeEntity.with_param(1) & SomeEntity.rule,
+    CriteriaWithParam(1),
+    CriteriaWithParam(1) & CriteriaWithoutParam(),
+    CriteriaWithParam(1) & SomeEntity.with_param(1),
 ))
 def test_class_criteria(criteria_: Criteria[SomeEntity], entity: SomeEntity):
     assert criteria_(entity) is True
